@@ -39,12 +39,30 @@ fst.transition(INIT, cmd('start'), STARTED, function * (next) {
   yield next
 })
 
-fst.transition(STARTED, cmd('chat'), function * (next) {
+fst.transition(STARTED, cmd('chat'), CHOOSE_1, function * (next) {
   let msg = 'Please, choose a language you speak well :)'
   let reply_markup = { keyboard: langKeyboard(this[SESSION].offset) }
   let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
   this[SESSION].date = res.date
   yield next
+})
+
+
+fst.transition(CHOOSE_1, blabla(), CHOOSE_2, function * (next) {
+  // TODO : need save lang
+  let msg = 'Please, choose a language you wish '
+  let reply_markup = { keyboard: langKeyboard(this[SESSION].offset) }
+  let res = yield this.sendMessage(this.from.id, msg, {reply_markup})
+  this[SESSION].date = res.date
+  yield next
+})
+
+fst.transition(CHOOSE_2, blabla(), WAITING, function * (next) {
+  let msg = 'Please, waiting ...'
+  let reply_markup = {}
+  let res = yield this.sendMessage(this.form.id, msg, { reply_markup})
+  this[SESSION].date = res.date
+  yield  next
 })
 
 //fst.transition(STARTED, text())
