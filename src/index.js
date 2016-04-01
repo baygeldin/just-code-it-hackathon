@@ -5,9 +5,15 @@ import buffer from './temp_modules/telekom-buffer'
 import session from './temp_modules/telekom-session'
 import FST from './temp_modules/telekom-fst'
 import config from './config'
-import { INIT, STARTED } from './states'
+
+import { INIT, STARTED, CHOOSE_1,
+  CHOOSE_2 } from './states'
+
 import cmd from './filters/cmd'
+import text from './filters/text'
+
 import langKeyboard from './lang-keyboard'
+import languages from './vendor/languages'
 
 let bot = new TK(config.token)
 
@@ -47,7 +53,21 @@ fst.transition(STARTED, cmd('chat'), function * (next) {
   yield next
 })
 
-//fst.transition(STARTED, text())
+let langCount = 6
+let getLangKeyboard = langKeyboard(languages, langCount)
+
+let moreLangs = function * (next) {
+  let msg = 'Here it is.'
+  let reply_markup = { keyboard: getLangKeyboard(this[SESSION].offset) }
+  let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
+  this[SESSION].date = res.date
+  this[SESSION].offset = (this[SESSION].offset +
+    langCount) % languages.length
+  yield next
+}
+
+fst.transition(CHOOSE_1, text('More'), moreLangs)
+fst.transition(CHOOSE_2, text('More'), moreLangs)
 
 bot.use(fst.transitions(STATE))
 
