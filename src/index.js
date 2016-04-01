@@ -15,6 +15,7 @@ import blabla from './filters/blabla'
 
 import langKeyboard from './lang-keyboard'
 import languages from './vendor/languages'
+import idioms from './vendor/idioms'
 
 let bot = new TK(config.token)
 
@@ -134,6 +135,7 @@ fst.transition(CHOOSE_2, blabla(), function * (next) {
   } else {
     queueMap[myQueue].push(this.from.id)
     this[STATE] = WAITING
+    let reply_markup = {keyboard : [['Show idiom']] }
     let msg = 'Please, wait ...'
     let res = yield this.sendMessage(this.from.id, msg, { reply_markup})
     this[SESSION].date = res.date
@@ -150,6 +152,21 @@ let resendMsg = function * (next) {
 }
 
 fst.transition(WAITING, havePartner, CHAT, resendMsg)
+
+function notHavePartner(ctx){
+  return !havePartner(ctx)
+}
+
+
+fst.transition(WAITING, notHavePartner, function * (next){
+  this[SESSION].numberIdiom = Math.floor(Math.random() * 8)
+  let picture = './images/idiomsEN/' + idioms[this[SESSION].numberIdiom].Picture
+  yield this.sendPhoto(this.from.id, picture)
+  let msg= idioms[this[SESSION].numberIdiom].Text + ' - ' + encodeURIComponent((idioms[this[SESSION].numberIdiom].Translation))
+  let reply_markup = {keyboard : [['Show idiom']]}
+  yield this.sendMessage(this.from.id, msg, { reply_markup })
+  yield next
+})
 fst.transition(CHAT, havePartner, CHAT, resendMsg)
 
 let cancel = function * (next) {
