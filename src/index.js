@@ -7,10 +7,11 @@ import FST from './temp_modules/telekom-fst'
 import config from './config'
 
 import { INIT, STARTED, CHOOSE_1,
-  CHOOSE_2 } from './states'
+  CHOOSE_2, WAITING } from './states'
 
 import cmd from './filters/cmd'
 import text from './filters/text'
+import blabla from './filters/blabla'
 
 import langKeyboard from './lang-keyboard'
 import languages from './vendor/languages'
@@ -19,9 +20,9 @@ let bot = new TK(config.token)
 
 let fst = new FST()
 
-/*let queueMap = {
-	'en_ru' : [],
-	'ru_en' : []
+let queueMap = {
+	'English_Russian' : [],
+	'Russian_English' : []
 }
 
 function startChat(lang, user1, user2){
@@ -50,7 +51,7 @@ function addToQueue(user, mainLang, preferedLang){
 		default:
 			alert('Unknown')
   }
-}*/
+}
 
 const STATE = Symbol('fst-state')
 const SESSION = Symbol('session')
@@ -102,6 +103,30 @@ let moreLangs = function * (next) {
 
 fst.transition(CHOOSE_1, text('More'), moreLangs)
 fst.transition(CHOOSE_2, text('More'), moreLangs)
+
+fst.transition(CHOOSE_1, blabla(), CHOOSE_2, function * (next) {
+  this[SESSION].myLang = this.text.slice(this.text.indexOf(' ')+1)
+  let msg = 'Please, choose a language you wish to learn'
+  let reply_markup = { keyboard: getLangKeyboard(this[SESSION].offset) }
+  let res = yield this.sendMessage(this.from.id, msg, {reply_markup})
+  this[SESSION].date = res.date
+  yield next
+})
+
+fst.transition(CHOOSE_2, blabla(), function * (next) {
+  let myQueue = this[SESSION].myLang+'_'+this[SESSION].partnerLang;
+  let relatedQueue = this[SESSION].partnerLang+'_'+this[SESSION].myLang;
+  // work in progress
+  this[SESSION].partnerLang = this.text.slice(this.text.indexOf(' ')+1)
+  queueMap[myQueue].push(this.from.id)
+  let msg = 'Please, waiting ...'
+  let reply_markup = { hide_keyboard: true }
+  let res = yield this.sendMessage(this.from.id, msg, { reply_markup})
+  this[SESSION].date = res.date
+  yield next
+})
+
+//fst.transition(STARTED, text())
 
 bot.use(fst.transitions(STATE))
 
