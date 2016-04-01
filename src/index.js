@@ -102,48 +102,10 @@ function * helpMessage (next) {
   yield next
 }
 
-fst.transition(cmd('help'), helpMessage)
-
-fst.transition(INIT, cmd('start'), STARTED, function * (next) {
-  let msg = 'Yo dawg! So I heard u like to chat, so we put a language '
-    + 'exchange chat into your chat so you can chat while you chat. '
-    + 'Just joking, ' + this.user.first_name + ' :)\n\n'
-    + '*Pimp My Lang* is a language exchange bot. It connects people '
-    + 'around the world and help you to improve you language skills '
-    + 'in the most efficient ways. Have fun! ;)'
-  yield this[FLOOD].respond(msg, noMarkup)
-  yield helpMessage.call(this, next)
-})
-
 let langCount = 5
 let getLangKeyboard = langKeyboard(languages, langCount)
 
-<<<<<<< HEAD
 function * chooseNativeLang (next) {
-=======
-fst.transition(STARTED, cmd('chat'), function * (next) {
-  if(!this[SESSION].myLang){
-    console.log('In choose 1')
-    let msg = 'Please, choose a language you speak well :)'
-    let reply_markup = { keyboard: getLangKeyboard() }
-    let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
-    this[SESSION].date = res.date
-    this[SESSION].offset = 0
-    this[STATE] = CHOOSE_1
-    yield next
-  } else {
-    console.log('In change')
-    let msg = 'Do you want change your language?'
-    let reply_markup = {keyboard: [['Yes'], ['No']]}
-    let res = yield this.sendMessage(this.from.id, msg, {reply_markup})
-    this[SESSION].date = res.date
-    this[SESSION].offset = 0
-    yield next
-  }
-})
-
-fst.transition(STARTED, text('Yes'), function * (next){
->>>>>>> 83b6dcaf43d6ea05aac0ac5c71ac46ed3dd96ddc
   let msg = 'Please, choose a language you speak well :)'
   let markup = { reply_markup: { keyboard: getLangKeyboard() } }
   yield this[FLOOD].respond(msg, markup)
@@ -157,14 +119,6 @@ function * changeLang (next) {
   yield this[FLOOD].respond(msg, markup)
   yield next
 }
-
-fst.transition(STARTED, [cmd('chat'), hasLang(SESSION)], ASK, changeLang)
-
-fst.transition(STARTED, cmd('chat'), CHOOSE_1, chooseNativeLang)
-
-fst.transition(STARTED, helpMessage)
-
-fst.transition(ASK, text('Yes'), CHOOSE_1, chooseNativeLang)
 
 function * joinChat (next) {
   let myQueue = `${this[SESSION].nativeLang}_${this[SESSION].foreignLang}`
@@ -189,6 +143,28 @@ function * joinChat (next) {
   }
   yield next
 }
+
+fst.transition(cmd('help'), helpMessage)
+
+fst.transition(INIT, cmd('start'), STARTED, function * (next) {
+  let msg = 'Yo dawg! So I heard u like to chat, so we put a language '
+    + 'exchange chat into your chat so you can chat while you chat. '
+    + 'Just joking, ' + this.user.first_name + ' :)\n\n'
+    + '*Pimp My Lang* is a language exchange bot. It connects people '
+    + 'around the world and help you to improve you language skills '
+    + 'in the most efficient ways. Have fun! ;)'
+  yield this[FLOOD].respond(msg, noMarkup)
+  yield helpMessage.call(this, next)
+})
+
+fst.transition(STARTED, [cmd('chat'), hasLang(SESSION)], ASK, changeLang)
+
+fst.transition(STARTED, cmd('chat'), CHOOSE_1, chooseNativeLang)
+
+fst.transition(STARTED, helpMessage)
+
+fst.transition(ASK, text('Yes'), CHOOSE_1, chooseNativeLang)
+
 
 fst.transition(ASK, text('No'), joinChat)
 
