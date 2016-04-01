@@ -13,6 +13,38 @@ let bot = new TK(config.token)
 
 let fst = new FST()
 
+let queueMap = {
+	'en_ru' : [],
+	'ru_en' : []
+}
+
+function startChat(lang, user1, user2){
+	///todo
+}
+
+function tryStartChat(lang, user) {
+	if (queueMap[lang][0]) {
+		startChat(lang, queueMap[lang].shift(), user)
+		return true
+	}
+	else return false
+}
+
+
+function addToQueue(user, mainLang, preferedLang){
+	switch (mainLang) {
+		case: 'en':
+			if (!tryStartChat('en_ru', user))
+				queueMap['en_ru'].push(user)
+			break
+		case: 'ru':
+			if (!tryStartChat('ru_en', user))
+				queueMap['ru_en'].push(user)
+			break
+		default:
+			alert('Unknown')
+}
+
 const STATE = Symbol('fst-state')
 const SESSION = Symbol('session')
 
