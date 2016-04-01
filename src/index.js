@@ -40,11 +40,11 @@ function tryStartChat(lang, user) {
 
 function addToQueue(user, mainLang, preferedLang){
 	switch (mainLang) {
-		case: 'en':
+		case 'en':
 			if (!tryStartChat('en_ru', user))
 				queueMap['en_ru'].push(user)
 			break
-		case: 'ru':
+		case 'ru':
 			if (!tryStartChat('ru_en', user))
 				queueMap['ru_en'].push(user)
 			break
@@ -82,12 +82,31 @@ fst.transition(INIT, cmd('start'), STARTED, function * (next) {
 let langCount = 5
 let getLangKeyboard = langKeyboard(languages, langCount)
 
-fst.transition(STARTED, cmd('chat'), CHOOSE_1, function * (next) {
-  let msg = 'Please, choose a language you speak well :)'
-  let reply_markup = { keyboard: getLangKeyboard() }
-  let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
-  this[SESSION].date = res.date
-  this[SESSION].offset = 0
+fst.transition(STARTED, cmd('chat'),function * (next) {
+  if(this[SESSION].myLang === undefined){
+    let msg = 'Please, choose a language you speak well :)'
+    let reply_markup = { keyboard: getLangKeyboard() }
+    let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
+    this[SESSION].date = res.date
+    this[SESSION].offset = 0
+    this[STATE] = CHOOSE_1
+    yield next
+  } else {
+    let msg = 'Do you wish change your language?'
+    let reply_markup = {keyboard: [['Yes'], ['No']]}
+    let res = yield this.sendMessage(this.from.id, msg, {reply_markup})
+    this[SESSION].date = res.date
+    this[SESSION].offset = 0
+    yield next
+  }
+})
+
+fst.transition(STARTED, cmd('Yes'), function * (next){
+  this[SESSION].myLang = undefined;
+  yield next
+})
+
+fst.transition(STARTED, cmd('No'), CHOOSE_2, function * (next){
   yield next
 })
 
