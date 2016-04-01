@@ -86,7 +86,6 @@ fst.transition(STARTED, text('Yes'), function * (next){
 })
 
 fst.transition(STARTED, text('No'), CHOOSE_2, function * (next){
-  this[SESSION].myLang = this.text.slice(this.text.indexOf(' ')+1)
   let msg = 'Please, choose a language you want to learn'
   let reply_markup = { keyboard: getLangKeyboard(this[SESSION].offset) }
   let res = yield this.sendMessage(this.from.id, msg, {reply_markup})
@@ -119,7 +118,6 @@ fst.transition(CHOOSE_1, blabla(), CHOOSE_2, function * (next) {
 fst.transition(CHOOSE_2, blabla(), function * (next) {
   this[SESSION].partnerLang = this.text.slice(this.text.indexOf(' ')+1)
   let myQueue = this[SESSION].myLang+'_'+this[SESSION].partnerLang
-  console.log(this[SESSION].partnerLang, this[SESSION].myLang)
   let relatedQueue = this[SESSION].partnerLang+'_'+this[SESSION].myLang
   let reply_markup = { hide_keyboard: true }
   let partner
@@ -157,6 +155,9 @@ fst.transition(CHAT, havePartner, CHAT, resendMsg)
 let cancel = function * (next) {
   let partner = usersMap[this.from.id]
   let reply_markup = { hide_keyboard: true }
+  let myQueue = this[SESSION].myLang+'_'+this[SESSION].partnerLang
+  let relatedQueue = this[SESSION].partnerLang+'_'+this[SESSION].myLang
+  queueMap[myQueue] = queueMap[myQueue].filter((id) => id !== this.from.id)
   if (partner) {
     delete usersMap[this.from.id]
     delete usersMap[partner]
