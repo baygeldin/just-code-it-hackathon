@@ -4,14 +4,14 @@
     "TopicEN":"Education",
     "QuestionEN":"Are women better parents than men?",
     "TopicRU":"Образование",
-    "QuestionRU":"Лучше ли женщины в воспитании детей?"
+    "QuestionRU":"Женщины лучше мужчин в воспитании детей?"
   },
   {
     "Number":2,
     "TopicEN":"Education",
     "QuestionEN":"Children learn best by observing the behavior of adults and copying it. ",
     "TopicRU":"Образование",
-    "QuestionRU":"Дети лучше всего обучаются наблюдая и подражая взрослым."
+    "QuestionRU":"Дети лучше всего обучаются наблюдая за взрослыми и подражая им."
   },
   {
     "Number":3,
@@ -32,7 +32,7 @@
     "TopicEN":"Education",
     "QuestionEN":"Foreign language instruction should begin in kindergarten. Do you agree or disagree?",
     "TopicRU":"Образование",
-    "QuestionRU":"Обучение иностранному языку должно начинаться в детском саду. Вы согласны или нет?"
+    "QuestionRU":"Обучение иностранному языку следует начинать в детском саду. Вы согласны или нет?"
   },
   {
     "Number":6,
@@ -46,7 +46,7 @@
     "TopicEN":"Education",
     "QuestionEN":"Should children be taught sex education in schools?",
     "TopicRU":"Образование",
-    "QuestionRU":"Нужно ли вести секс образование в школах?"
+    "QuestionRU":"Нужно ли вести секс-образование в школах?"
   },
   {
     "Number":8,
@@ -60,7 +60,7 @@
     "TopicEN":"Environment",
     "QuestionEN":"The destruction of the world’s forests is inevitable as our need for land and food grows. ",
     "TopicRU":"Живой мир",
-    "QuestionRU":"Уничтожения лесов невозможно избежать из-за того, что потребности человечества в пространстве и еде лишь растут."
+    "QuestionRU":"Уничтожения лесов невозможно избежать из-за того, что потребности человечества в пространстве и еде растут."
   },
   {
     "Number":10,
@@ -102,6 +102,6 @@
     "TopicEN":"World Problems ",
     "QuestionEN":"Does travel help to promote understanding and communication between countries?",
     "TopicRU":"Глобальные проблемы",
-    "QuestionRU":"Помогает ли туризм улучшению понимания и общения  между странами?"
+    "QuestionRU":"Помогает ли туризм улучшению понимания и общения между странами?"
   }
 ]

@@ -56,12 +56,41 @@ fst.transition(INIT, cmd('start'), STARTED, function * (next) {
 let langCount = 5
 let getLangKeyboard = langKeyboard(languages, langCount)
 
-fst.transition(STARTED, cmd('chat'), CHOOSE_1, function * (next) {
+fst.transition(STARTED, cmd('chat'), function * (next) {
+  if(!this[SESSION].myLang){
+    let msg = 'Please, choose a language you speak well :)'
+    let reply_markup = { keyboard: getLangKeyboard() }
+    let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
+    this[SESSION].date = res.date
+    this[SESSION].offset = 0
+    this[STATE] = CHOOSE_1
+    yield next
+  } else {
+    let msg = 'Do you wish change your language?'
+    let reply_markup = {keyboard: [['Yes'], ['No']]}
+    let res = yield this.sendMessage(this.from.id, msg, {reply_markup})
+    this[SESSION].date = res.date
+    this[SESSION].offset = 0
+    yield next
+  }
+})
+
+fst.transition(STARTED, text('Yes'), function * (next){
   let msg = 'Please, choose a language you speak well :)'
   let reply_markup = { keyboard: getLangKeyboard() }
   let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
   this[SESSION].date = res.date
   this[SESSION].offset = 0
+  this[STATE] = CHOOSE_1
+  yield next
+})
+
+fst.transition(STARTED, text('No'), CHOOSE_2, function * (next){
+  this[SESSION].myLang = this.text.slice(this.text.indexOf(' ')+1)
+  let msg = 'Please, choose a language you want to learn'
+  let reply_markup = { keyboard: getLangKeyboard(this[SESSION].offset) }
+  let res = yield this.sendMessage(this.from.id, msg, {reply_markup})
+  this[SESSION].date = res.date
   yield next
 })
 
@@ -90,6 +119,7 @@ fst.transition(CHOOSE_1, blabla(), CHOOSE_2, function * (next) {
 fst.transition(CHOOSE_2, blabla(), function * (next) {
   this[SESSION].partnerLang = this.text.slice(this.text.indexOf(' ')+1)
   let myQueue = this[SESSION].myLang+'_'+this[SESSION].partnerLang
+  console.log(this[SESSION].partnerLang, this[SESSION].myLang)
   let relatedQueue = this[SESSION].partnerLang+'_'+this[SESSION].myLang
   let reply_markup = { hide_keyboard: true }
   let partner
@@ -130,8 +160,8 @@ let cancel = function * (next) {
   if (partner) {
     delete usersMap[this.from.id]
     delete usersMap[partner]
+    yield this.sendMessage(partner, 'sorry, he quited :(', { reply_markup})
   }
-  yield this.sendMessage(partner, 'sorry, he quited :(', { reply_markup})
   yield next
 }
 
