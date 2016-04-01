@@ -7,7 +7,7 @@ import FST from './temp_modules/telekom-fst'
 import config from './config'
 
 import { INIT, STARTED, CHOOSE_1,
-  CHOOSE_2, WAITING } from './states'
+  CHOOSE_2, WAITING, CHAT } from './states'
 
 import cmd from './filters/cmd'
 import text from './filters/text'
@@ -25,33 +25,7 @@ let queueMap = {
 	'Russian_English' : []
 }
 
-function startChat(lang, user1, user2){
-	///todo
-}
-
-function tryStartChat(lang, user) {
-	if (queueMap[lang][0]) {
-		startChat(lang, queueMap[lang].shift(), user)
-		return true
-	}
-	else return false
-}
-
-
-function addToQueue(user, mainLang, preferedLang){
-	switch (mainLang) {
-		case: 'en':
-			if (!tryStartChat('en_ru', user))
-				queueMap['en_ru'].push(user)
-			break
-		case: 'ru':
-			if (!tryStartChat('ru_en', user))
-				queueMap['ru_en'].push(user)
-			break
-		default:
-			alert('Unknown')
-  }
-}
+let usersMap = {}
 
 const STATE = Symbol('fst-state')
 const SESSION = Symbol('session')
@@ -106,7 +80,7 @@ fst.transition(CHOOSE_2, text('More'), moreLangs)
 
 fst.transition(CHOOSE_1, blabla(), CHOOSE_2, function * (next) {
   this[SESSION].myLang = this.text.slice(this.text.indexOf(' ')+1)
-  let msg = 'Please, choose a language you wish to learn'
+  let msg = 'Please, choose a language you want to learn'
   let reply_markup = { keyboard: getLangKeyboard(this[SESSION].offset) }
   let res = yield this.sendMessage(this.from.id, msg, {reply_markup})
   this[SESSION].date = res.date
@@ -114,19 +88,55 @@ fst.transition(CHOOSE_1, blabla(), CHOOSE_2, function * (next) {
 })
 
 fst.transition(CHOOSE_2, blabla(), function * (next) {
-  let myQueue = this[SESSION].myLang+'_'+this[SESSION].partnerLang;
-  let relatedQueue = this[SESSION].partnerLang+'_'+this[SESSION].myLang;
-  // work in progress
   this[SESSION].partnerLang = this.text.slice(this.text.indexOf(' ')+1)
-  queueMap[myQueue].push(this.from.id)
-  let msg = 'Please, waiting ...'
+  let myQueue = this[SESSION].myLang+'_'+this[SESSION].partnerLang
+  let relatedQueue = this[SESSION].partnerLang+'_'+this[SESSION].myLang
   let reply_markup = { hide_keyboard: true }
-  let res = yield this.sendMessage(this.from.id, msg, { reply_markup})
-  this[SESSION].date = res.date
+  let partner
+  if (partner = queueMap[relatedQueue][0]) {
+    this[STATE] = CHAT
+    usersMap[partner] = this.from.id
+    usersMap[this.from.id] = partner
+    queueMap[relatedQueue].pop()
+    let msg = 'Hey! Here\'s your partner'
+    let res = yield this.sendMessage(partner, msg, { reply_markup})
+    msg = 'Hey! Here\'s your partner'
+    res = yield this.sendMessage(this.from.id, msg, { reply_markup})
+    this[SESSION].date = res.date
+  } else {
+    queueMap[myQueue].push(this.from.id)
+    this[STATE] = WAITING
+    let msg = 'Please, wait ...'
+    let res = yield this.sendMessage(this.from.id, msg, { reply_markup})
+    this[SESSION].date = res.date
+  }
   yield next
 })
 
-//fst.transition(STARTED, text())
+let havePartner = (ctx) => usersMap[ctx.from.id]
+
+let resendMsg = function * (next) {
+  let reply_markup = { hide_keyboard: true }
+  yield this.sendMessage(usersMap[this.from.id], this.text, { reply_markup})
+  yield next
+}
+
+fst.transition(WAITING, havePartner, CHAT, resendMsg)
+fst.transition(CHAT, havePartner, CHAT, resendMsg)
+
+let cancel = function * (next) {
+  let partner = usersMap[this.from.id]
+  let reply_markup = { hide_keyboard: true }
+  if (partner) {
+    delete usersMap[this.from.id]
+    delete usersMap[partner]
+  }
+  yield this.sendMessage(partner, 'sorry, he quited :(', { reply_markup})
+  yield next
+}
+
+fst.transition(WAITING, cmd('cancel'), STARTED, cancel)
+fst.transition(CHAT, cmd('cancel'), STARTED, cancel)
 
 bot.use(fst.transitions(STATE))
 
