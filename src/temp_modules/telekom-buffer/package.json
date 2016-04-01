@@ -1,0 +1,20 @@
+{
+  "name": "telekom-buffer",
+  "version": "0.0.1",
+  "description": "Telekom middleware which processes user requests in the right order.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "telekom",
+    "telegram",
+    "queue",
+    "buffer"
+  ],
+  "author": "Alexander Baygeldin",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "koa-compose": "^2.4.0"
+  }
+}

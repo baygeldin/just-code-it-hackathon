@@ -1,0 +1,38 @@
+{
+  "name": "pmlbot",
+  "version": "0.0.1",
+  "description": "Language exchange bot for Telegram.",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel -w src/ -d lib --source-maps inline --copy-files",
+    "lint": "standard --verbose src/** | snazzy",
+    "start": "node lib/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/baygeldin/hackathon-temp.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "language",
+    "exchange"
+  ],
+  "author": "Alexander Baygeldin",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/baygeldin/hackathon-temp/issues"
+  },
+  "homepage": "https://github.com/baygeldin/hackathon-temp#readme",
+  "devDependencies": {
+    "babel-cli": "^6.6.5",
+    "babel-preset-es2015-node5": "^1.2.0"
+  },
+  "dependencies": {
+    "co": "^4.6.0",
+    "koa-compose": "^2.4.0",
+    "node-telegram-bot-api": "^0.21.1",
+    "source-map-support": "^0.4.0"
+  }
+}

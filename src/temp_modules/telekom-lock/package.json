@@ -1,0 +1,11 @@
+{
+  "name": "telekom-lock",
+  "version": "0.0.1",
+  "description": "Telekom middleware which locks request processing.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexander Baygeldin",
+  "license": "Apache-2.0"
+}

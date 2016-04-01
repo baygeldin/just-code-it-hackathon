@@ -1,0 +1,14 @@
+{
+  "name": "telekom-fst",
+  "version": "0.0.1",
+  "description": "Telekom middleware for finite state transducers.",
+  "main": "index.js",
+  "dependencies": {
+    "koa-compose": "^2.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexander Baygeldin",
+  "license": "Apache-2.0"
+}
