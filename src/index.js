@@ -19,7 +19,7 @@ let bot = new TK(config.token)
 
 let fst = new FST()
 
-let queueMap = {
+/*let queueMap = {
 	'en_ru' : [],
 	'ru_en' : []
 }
@@ -49,7 +49,8 @@ function addToQueue(user, mainLang, preferedLang){
 			break
 		default:
 			alert('Unknown')
-}
+  }
+}*/
 
 const STATE = Symbol('fst-state')
 const SESSION = Symbol('session')
@@ -71,30 +72,31 @@ fst.transition(INIT, cmd('start'), STARTED, function * (next) {
   let msg = outdent`
     Hello, ${this.from.first_name}! Pimp My Lang
     is a language exchange bot. Yo, dawg!`
-  let reply_markup = {}
+  let reply_markup = { hide_keyboard: true }
   let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
   this[SESSION].date = res.date
   yield next
 })
 
-fst.transition(STARTED, cmd('chat'), function * (next) {
-  let msg = 'Please, choose a language you speak well :)'
-  let reply_markup = { keyboard: langKeyboard(this[SESSION].offset) }
-  let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
-  this[SESSION].date = res.date
-  yield next
-})
-
-let langCount = 6
+let langCount = 5
 let getLangKeyboard = langKeyboard(languages, langCount)
+
+fst.transition(STARTED, cmd('chat'), CHOOSE_1, function * (next) {
+  let msg = 'Please, choose a language you speak well :)'
+  let reply_markup = { keyboard: getLangKeyboard() }
+  let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
+  this[SESSION].date = res.date
+  this[SESSION].offset = 0
+  yield next
+})
 
 let moreLangs = function * (next) {
   let msg = 'Here it is.'
+  this[SESSION].offset = (this[SESSION].offset % languages.length)
+    + langCount
   let reply_markup = { keyboard: getLangKeyboard(this[SESSION].offset) }
   let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
   this[SESSION].date = res.date
-  this[SESSION].offset = (this[SESSION].offset +
-    langCount) % languages.length
   yield next
 }
 

@@ -7,8 +7,8 @@ function format (lang) {
 export default (languages, count) => {
   return (offset) => {
     offset = offset ? offset % languages.length : 0
-    let languages = languages.concat(languages)
-    let lang = languages.slice(offset, offset + count)
+    let twice = languages.concat(languages)
+    let lang = twice.slice(offset, offset + count + 1)
     let keyboard = [
       [format(lang[0]), format(lang[1]), format(lang[2])],
       [format(lang[3]), format(lang[4]), format(lang[5])],
