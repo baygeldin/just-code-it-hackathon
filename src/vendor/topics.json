@@ -1,0 +1,107 @@
+[
+  {
+    "Number":1,
+    "TopicEN":"Education",
+    "QuestionEN":"Are women better parents than men?",
+    "TopicRU":"Образование",
+    "QuestionRU":"Лучше ли женщины в воспитании детей?"
+  },
+  {
+    "Number":2,
+    "TopicEN":"Education",
+    "QuestionEN":"Children learn best by observing the behavior of adults and copying it. ",
+    "TopicRU":"Образование",
+    "QuestionRU":"Дети лучше всего обучаются наблюдая и подражая взрослым."
+  },
+  {
+    "Number":3,
+    "TopicEN":"Education",
+    "QuestionEN":"Do the benefits of study abroad justify the difficulties?",
+    "TopicRU":"Образование",
+    "QuestionRU":"Покрывают ли преимущества обучения за рубежом его сложность?"
+  },
+  {
+    "Number":4,
+    "TopicEN":"Education",
+    "QuestionEN":"Education is the single most important factor in the development of a country. Do you agree?",
+    "TopicRU":"Образование",
+    "QuestionRU":"Образование - важнейший фактор в развитии страны. Вы согласны?"
+  },
+  {
+    "Number":5,
+    "TopicEN":"Education",
+    "QuestionEN":"Foreign language instruction should begin in kindergarten. Do you agree or disagree?",
+    "TopicRU":"Образование",
+    "QuestionRU":"Обучение иностранному языку должно начинаться в детском саду. Вы согласны или нет?"
+  },
+  {
+    "Number":6,
+    "TopicEN":"Education",
+    "QuestionEN":"In what ways has information technology changed education and teaching practices in the past 10 years?",
+    "TopicRU":"Образование",
+    "QuestionRU":"Как изменился процесс образования благодаря развитию технологий за последние 10 лет?"
+  },
+  {
+    "Number":7,
+    "TopicEN":"Education",
+    "QuestionEN":"Should children be taught sex education in schools?",
+    "TopicRU":"Образование",
+    "QuestionRU":"Нужно ли вести секс образование в школах?"
+  },
+  {
+    "Number":8,
+    "TopicEN":"Environment",
+    "QuestionEN":"Are our zoos cruel to wild animals?",
+    "TopicRU":"Живой мир",
+    "QuestionRU":"Жестоко ли помещать животных в зоопарки?"
+  },
+  {
+    "Number":9,
+    "TopicEN":"Environment",
+    "QuestionEN":"The destruction of the world’s forests is inevitable as our need for land and food grows. ",
+    "TopicRU":"Живой мир",
+    "QuestionRU":"Уничтожения лесов невозможно избежать из-за того, что потребности человечества в пространстве и еде лишь растут."
+  },
+  {
+    "Number":10,
+    "TopicEN":"Environment",
+    "QuestionEN":"Is animal testing necessary?",
+    "TopicRU":"Живой мир",
+    "QuestionRU":"Обязательно ли проводить эксперименты на животных?"
+  },
+  {
+    "Number":11,
+    "TopicEN":"Lifestyle ",
+    "QuestionEN":"In your opinion what factors contribute to a good movie?",
+    "TopicRU":"Стиль жизни",
+    "QuestionRU":"Какие факторы на ваш взгляд влияют на создание хорошего кино?"
+  },
+  {
+    "Number":12,
+    "TopicEN":"Lifestyle ",
+    "QuestionEN":"Does modern technology make life more convenient, or was life better when technology was simpler?",
+    "TopicRU":"Стиль жизни",
+    "QuestionRU":"Сделало ли развитие технологий нашу жизнь удобнее, или жизнь была лучше, когда технологии были проще?"
+  },
+  {
+    "Number":13,
+    "TopicEN":"Lifestyle ",
+    "QuestionEN":"A vegetarian diet is as healthy as a diet containing meat. What is your opinion?",
+    "TopicRU":"Стиль жизни",
+    "QuestionRU":"Вегетарианское питание так же полезно, как и питание, содержащее мясо. Как вы считаете?"
+  },
+  {
+    "Number":14,
+    "TopicEN":"World Problems ",
+    "QuestionEN":"Discuss the advantage and disadvantage of giving international aid to poor countries.",
+    "TopicRU":"Глобальные проблемы",
+    "QuestionRU":"Обсудите плюсы и минусы гуманитарной помощи бедным странам."
+  },
+  {
+    "Number":15,
+    "TopicEN":"World Problems ",
+    "QuestionEN":"Does travel help to promote understanding and communication between countries?",
+    "TopicRU":"Глобальные проблемы",
+    "QuestionRU":"Помогает ли туризм улучшению понимания и общения  между странами?"
+  }
+]
