@@ -1,3 +1,5 @@
+import 'source-map-support/register'
+import outdent from 'outdent'
 import TK from './temp_modules/telekom'
 import buffer from './temp_modules/telekom-buffer'
 import session from './temp_modules/telekom-session'
@@ -5,7 +7,7 @@ import FST from './temp_modules/telekom-fst'
 import config from './config'
 import { INIT, STARTED } from './states'
 import cmd from './filters/cmd'
-import 'source-map-support/register'
+import langKeyboard from './lang-keyboard'
 
 let bot = new TK(config.token)
 
@@ -28,16 +30,24 @@ bot.use(function * (next) {
 })
 
 fst.transition(INIT, cmd('start'), STARTED, function * (next) {
-  let msg = yield this.sendMessage(this.from.id, 'Hello')
-  this[SESSION].date = msg.date
+  let msg = outdent`
+    Hello, ${this.from.first_name}! Pimp My Lang
+    is a language exchange bot. Yo, dawg!`
+  let reply_markup = {}
+  let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
+  this[SESSION].date = res.date
   yield next
 })
 
-fst.transition(STARTED, function * (next) {
-  let msg = yield this.sendMessage(this.from.id, 'Yeah')
-  this[SESSION].date = msg.date
+fst.transition(STARTED, cmd('chat'), function * (next) {
+  let msg = 'Please, choose a language you speak well :)'
+  let reply_markup = { keyboard: langKeyboard(this[SESSION].offset) }
+  let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
+  this[SESSION].date = res.date
   yield next
 })
+
+//fst.transition(STARTED, text())
 
 bot.use(fst.transitions(STATE))
 
