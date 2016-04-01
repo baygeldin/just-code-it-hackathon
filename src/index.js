@@ -29,6 +29,8 @@ import langKeyboard from './utils/lang-keyboard'
 
 import languages from './vendor/languages'
 import emoji from './vendor/emoji'
+import idioms from './vendor/idioms'
+import topics from './vendor/topics'
 
 // Main declarations
 
@@ -116,7 +118,32 @@ fst.transition(INIT, cmd('start'), STARTED, function * (next) {
 let langCount = 5
 let getLangKeyboard = langKeyboard(languages, langCount)
 
+<<<<<<< HEAD
 function * chooseNativeLang (next) {
+=======
+fst.transition(STARTED, cmd('chat'), function * (next) {
+  if(!this[SESSION].myLang){
+    console.log('In choose 1')
+    let msg = 'Please, choose a language you speak well :)'
+    let reply_markup = { keyboard: getLangKeyboard() }
+    let res = yield this.sendMessage(this.from.id, msg, { reply_markup })
+    this[SESSION].date = res.date
+    this[SESSION].offset = 0
+    this[STATE] = CHOOSE_1
+    yield next
+  } else {
+    console.log('In change')
+    let msg = 'Do you want change your language?'
+    let reply_markup = {keyboard: [['Yes'], ['No']]}
+    let res = yield this.sendMessage(this.from.id, msg, {reply_markup})
+    this[SESSION].date = res.date
+    this[SESSION].offset = 0
+    yield next
+  }
+})
+
+fst.transition(STARTED, text('Yes'), function * (next){
+>>>>>>> 83b6dcaf43d6ea05aac0ac5c71ac46ed3dd96ddc
   let msg = 'Please, choose a language you speak well :)'
   let markup = { reply_markup: { keyboard: getLangKeyboard() } }
   yield this[FLOOD].respond(msg, markup)
@@ -155,6 +182,7 @@ function * joinChat (next) {
   } else {
     queueMap[myQueue].push(this.from.id)
     this[STATE] = WAITING
+    let reply_markup = {keyboard : [['Show idiom']] }
     let msg = 'Please, wait ...'
     let res = yield this.sendMessage(this.from.id, msg, { reply_markup})
     this[SESSION].date = res.date
@@ -208,13 +236,32 @@ fst.transition(CHOOSE_2, chooseForeignLang)
 let havePartner = (ctx) => usersMap[ctx.from.id]
 
 let resendMsg = function * (next) {
-  let reply_markup = { hide_keyboard: true }
-  yield this.sendMessage(usersMap[this.from.id], this.text, { reply_markup})
+
+  let reply_markup = {keyboard : [['Next topic']] }
+  if(this.text !== 'Next topic') {
+    yield this.sendMessage(usersMap[this.from.id], this.text, {reply_markup})
+    yield next
+  } else {
+    yield nextTopic.call(this,next)
+  }
+
+}
+
+let nextTopic = function * (next) {
+  let reply_markup = {keyboard : [['Next topic']] }
+  this[SESSION].numberTopic = Math.floor(Math.random() * 15)
+  yield this.sendMessage(this.from.id, 'Your topic is ' + topics[this[SESSION].numberTopic].TopicEN + '(Ваша тема для общения '
+    + topics[this[SESSION].numberTopic].TopicRU + ')' , {reply_markup})
+  yield this.sendMessage(usersMap[this.from.id], 'Your topic is ' + topics[this[SESSION].numberTopic].TopicEN + '(Ваша тема для общения '
+    + topics[this[SESSION].numberTopic].TopicRU + ')' , {reply_markup})
   yield next
 }
 
 fst.transition(WAITING, havePartner, CHAT, resendMsg)
-fst.transition(CHAT, havePartner, CHAT, resendMsg)
+
+function notHavePartner(ctx){
+  return !havePartner(ctx)
+}
 
 let cancel = function * (next) {
   let partner = usersMap[this.from.id]
@@ -230,8 +277,34 @@ let cancel = function * (next) {
   yield next
 }
 
+
 fst.transition(WAITING, cmd('cancel'), STARTED, cancel)
+
+
+fst.transition(WAITING, notHavePartner, function * (next){
+  this[SESSION].numberIdiom = Math.floor(Math.random() * 8)
+  let picture = `${__dirname}/images/idiomsEN/${idioms[this[SESSION].numberIdiom].Picture}`
+  yield this.sendPhoto(this.from.id, picture)
+  let msg= idioms[this[SESSION].numberIdiom].Text + ' - ' + encodeURIComponent((idioms[this[SESSION].numberIdiom].Translation))
+  let reply_markup = {keyboard : [['Show idiom']]}
+  yield this.sendMessage(this.from.id, msg, { reply_markup })
+  yield next
+})
+
+/*fst.transition(CHAT, text('Next topic'), function * (next){
+  this[SESSION].numberTopic = Math.floor(Math.random() * 15)
+  yield this.sendMessage(this.from.id, 'Your topic is ' + topics[this[SESSION].numberTopic].TopicEN, {reply_markup})
+  yield this.sendMessage(usersMap[this.from.id], 'Your topic is ' + topics[this[SESSION].numberTopic].TopicEN, {reply_markup})
+})*/
+
 fst.transition(CHAT, cmd('cancel'), STARTED, cancel)
+fst.transition(CHAT, havePartner, CHAT, resendMsg)
+
+
+
+
+
+
 
 bot.use(fst.transitions(STATE))
 
