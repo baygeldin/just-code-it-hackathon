@@ -195,6 +195,15 @@ function * resendMsg (next) {
   yield next
 }
 
+fst.transition(cmd('end'), INIT, function * (next) {
+  let myQueue = `${this[SESSION].nativeLang}_${this[SESSION].foreignLang}`
+  if (db.queues[myQueue]) {
+    db.queues[myQueue].filter((id) => id !== this.from.id)
+  }
+  delete db.users[this.from.id]
+  yield next
+})
+
 fst.transition(cmd('help'), helpMessage)
 
 fst.transition(INIT, cmd('start'), STARTED, function * (next) {
