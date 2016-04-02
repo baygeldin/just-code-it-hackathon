@@ -1,4 +1,4 @@
-import emoji from './vendor/emoji'
+import emoji from '../vendor/emoji'
 
 function format (lang) {
   return `${emoji[lang.emoji]} ${lang.title}`

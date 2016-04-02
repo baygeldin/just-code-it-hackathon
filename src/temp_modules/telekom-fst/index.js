@@ -11,6 +11,8 @@ function wrapFilter (filter) {
   }
 }
 
+let SKIP = Symbol('fst-skip')
+
 export default class FST {
   constructor () {
     this.rules = []
@@ -55,9 +57,8 @@ export default class FST {
     }
 
     let self = this
-    let SKIP = Symbol('fst-skip')
     let fn = function * (next) {
-      if (this[SKIP] || this[self.symbol] !== source || (filters &&
+      if (this[SKIP] || (source && this[self.symbol] !== source) || (filters &&
         !filters.reduce((prev, next) => prev && next(this), true))) {
           yield next
       } else {
