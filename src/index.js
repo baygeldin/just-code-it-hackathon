@@ -59,7 +59,7 @@ const FLOOD = Symbol('flood')
 
 bot.use(buffer())
 
-// DAFUQ IS SESSION?!
+// XXX: DAFUQ IS SESSION?!
 
 // bot.use(session(SESSION))
 
@@ -82,7 +82,7 @@ bot.use(flood(FLOOD))
 
 // Common stuff
 
-let noMarkup = { reply_markup: { hide_keyboard: true } }
+let noMarkup = { reply_markup: { hide_keyboard: true }, parse_mode: 'Markdown' }
 
 // Main logic for Finite State Transducer
 
@@ -137,9 +137,10 @@ function * nextTopic (next) {
   this[SESSION].topicLang = topicLang
   db.users[this[SESSION].partner].topicLang = topicLang
   let msg = 'Talk in ' + lang + ' and discuss this topic:\n' +
-    topics[numberTopic][lang]
+    `_${topics[numberTopic][lang]}_`
   let markup = {
-    reply_markup: { keyboard: [[`Next topic, please ${emoji['point_right']}`]] }
+    reply_markup: { keyboard: [[`Next topic, please ${emoji['point_right']}`]] },
+    parse_mode: 'Markdown'
   }
   yield this.sendMessage(this[SESSION].partner, msg, markup)
   yield this.sendMessage(this.from.id, msg, markup)
@@ -156,9 +157,9 @@ function * joinChat (next) {
     db.users[this[SESSION].partner].state = CHAT
     db.users[this[SESSION].partner].partner = this.from.id
     db.queues[relatedQueue].pop()
-    let msg = `Hey-hey! Here's your partner ${emoji['v']}`
+    let msg = `_Hey-hey! Here's your partner_ ${emoji['v']}`
     yield this.sendMessage(this[SESSION].partner, msg, noMarkup)
-    msg = `Good! I found you a partner to talk ${emoji['v']}`
+    msg = `_Good! I found you a partner to talk_ ${emoji['v']}`
     yield this.sendMessage(this.from.id, msg, noMarkup)
     yield nextTopic.call(this, next)
   } else {
@@ -168,7 +169,8 @@ function * joinChat (next) {
       ' at the moment. I\'ll notify you once there will be some! ;)\n' +
       'In the meantime, explore some ' + this[SESSION].foreignLang + ' idioms!'
     let markup = {
-      reply_markup: { keyboard: [[`Yeah, show me some! ${emoji['punch']}`]] }
+      reply_markup: { keyboard: [[`Yeah, show me some! ${emoji['punch']}`]] },
+      parse_mode: 'Markdown'
     }
     yield this[FLOOD].respond(msg, markup)
     yield next
@@ -201,6 +203,7 @@ fst.transition(cmd('end'), INIT, function * (next) {
     db.queues[myQueue].filter((id) => id !== this.from.id)
   }
   delete db.users[this.from.id]
+  yield this.sendMessage(this.from.id, 'See you soon!', noMarkup)
   yield next
 })
 
@@ -210,8 +213,8 @@ fst.transition(INIT, cmd('start'), STARTED, function * (next) {
   let msg = 'Yo dawg! So I heard u like to chat, so we put a language ' +
     'exchange chat into your chat so you can chat while you chat. ' +
     'Just joking, ' + this.from.first_name + ' :)\n\n' +
-    'Pimp My Lang is a language exchange bot. It connects people ' +
-    'around the world and help you to improve you language skills ' +
+    '*Pimp My Lang* is a language exchange bot. It connects people ' +
+    'around the world and help you to improve your language skills ' +
     'in the most efficient ways. Have fun! ;)'
   yield this[FLOOD].respond(msg, noMarkup)
   yield helpMessage.call(this, next)
@@ -270,8 +273,9 @@ fst.transition(CHAT, cmd('cancel'), CONFIRM, function * (next) {
   let partner = this[SESSION].partner
   this[SESSION].partner = null
   db.users[partner].partner = null
-  yield this.sendMessage(partner, 'Your partner left the dialog :c')
-  yield this.sendMessage(this.from.id, 'You left the dialog :c')
+  let opts = { parse_mode: 'Markdown' }
+  yield this.sendMessage(partner, '_Your partner left the dialog :c_', opts)
+  yield this.sendMessage(this.from.id, '_You left the dialog :c_', opts)
   db.users[partner].state = CONFIRM
   let msg = 'What you wanna do next?'
   let markup = {
