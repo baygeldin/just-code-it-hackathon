@@ -255,7 +255,7 @@ fst.transition(WAITING, text('show me some!'), function * (next) {
 })
 fst.transition(WAITING, cmd('cancel'), STARTED, function * (next) {
   let myQueue = `${this[SESSION].nativeLang}_${this[SESSION].foreignLang}`
-  let msg = 'Goodbay! :c'
+  let msg = 'Goodbye! :c'
   db.queues[myQueue] = db.queues[myQueue].filter((id) => id !== this.from.id)
   yield this[FLOOD].respond(msg, noMarkup)
   yield next
@@ -290,7 +290,7 @@ fst.transition(CHAT, resendMsg)
 
 fst.transition(CONFIRM, text('another conversation'), joinChat)
 fst.transition(CONFIRM, text('Leave'), STARTED, function * (next) {
-  let msg = 'Goodbay! :c'
+  let msg = 'Goodbye! :c'
   yield this[FLOOD].respond(msg, noMarkup)
   yield next
 })
